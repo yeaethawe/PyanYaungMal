@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ g.language|default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,35 +12,58 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
 </head>
 <body class="dash">
-    <button type="button" class="dash-menu-toggle" id="sidebar-toggle" aria-label="Open menu">☰</button>
+    <button type="button" class="dash-menu-toggle" id="sidebar-toggle" aria-label="{{ t('menu') }}">☰</button>
     <aside class="dash-sidebar" id="sidebar">
         <a class="dash-team" href="{{ url_for('home') }}">
             <img class="dash-mark-img" src="{{ url_for('static', filename='brand/mark.png') }}" alt="">
             <span>
                 <span class="dash-kicker">Pyan Yaung Mal</span>
-                <strong>Resell · Renew · Reuse</strong>
+                <strong>{{ t('brand.tag') }}</strong>
             </span>
         </a>
         <nav class="dash-nav">
-            <p class="dash-nav-label">Explore</p>
-            <a href="{{ url_for('home') }}">
+            <p class="dash-nav-label">{{ t('nav.explore') }}</p>
+            <a class="{% if request.endpoint in ['index', 'home'] %}is-active{% endif %}" href="{{ url_for('home') }}">
                 <span class="dash-ico" aria-hidden="true">{% include 'icons/home.svg' %}</span>
-                Home
+                {{ t('nav.welcome') }}
             </a>
-            <p class="dash-nav-label">Manage</p>
+            <a class="{% if request.endpoint == 'notifications' %}is-active{% endif %}" href="{{ url_for('notifications') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/bell.svg' %}</span>
+                {{ t('nav.alerts') }}
+                {% if g.unread_count %}
+                    <span class="tab-badge">{{ g.unread_count }}</span>
+                {% endif %}
+            </a>
+            <a class="{% if request.endpoint == 'explore' %}is-active{% endif %}" href="{{ url_for('explore') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/bag.svg' %}</span>
+                {{ t('nav.explore') }}
+            </a>
+            <a class="{% if request.endpoint == 'sell' %}is-active{% endif %}" href="{{ url_for('sell') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/key.svg' %}</span>
+                {{ t('nav.sell') }}
+            </a>
+            <a class="{% if request.endpoint in ['chats', 'chat_detail'] %}is-active{% endif %}" href="{{ url_for('chats') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/chat.svg' %}</span>
+                {{ t('nav.chats') }}
+            </a>
+            <p class="dash-nav-label">{{ t('nav.manage') }}</p>
+            <a class="{% if request.endpoint in ['manage_products', 'edit_product'] %}is-active{% endif %}" href="{{ url_for('manage_products') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/bag.svg' %}</span>
+                {{ t('nav.products') }}
+            </a>
             {% if g.user['role'] == 'admin' %}
                 <a class="{% if request.endpoint == 'admin' %}is-active{% endif %}" href="{{ url_for('admin') }}">
                     <span class="dash-ico" aria-hidden="true">{% include 'icons/users.svg' %}</span>
-                    Team members
+                    {{ t('nav.team') }}
                 </a>
                 <a href="{{ url_for('admin') }}#keys">
                     <span class="dash-ico" aria-hidden="true">{% include 'icons/key.svg' %}</span>
-                    Admin keys
+                    {{ t('nav.keys') }}
                 </a>
             {% endif %}
-            <a class="{% if request.endpoint in ['settings', 'settings_password', 'settings_avatar'] %}is-active{% endif %}" href="{{ url_for('settings') }}">
+            <a class="{% if request.endpoint in ['settings', 'settings_password', 'settings_avatar', 'settings_qr', 'settings_language'] %}is-active{% endif %}" href="{{ url_for('settings') }}">
                 <span class="dash-ico" aria-hidden="true">{% include 'icons/settings.svg' %}</span>
-                Settings
+                {{ t('nav.settings') }}
             </a>
         </nav>
         <div class="dash-sidebar-foot">
@@ -58,43 +81,21 @@
             </label>
             {% endblock %}
             <div class="dash-top-actions">
-                <details class="notif-box">
-                    <summary class="icon-btn" aria-label="Alerts">
-                        {% include 'icons/bell.svg' %}
-                        {% if g.unread_count %}
-                            <span class="badge">{{ g.unread_count }}</span>
-                        {% endif %}
-                    </summary>
-                    <div class="notif-panel">
-                        {% if g.notifications %}
-                            <ul class="notif-list">
-                                {% for item in g.notifications %}
-                                    <li class="notif-item {% if item['read'] %}is-read{% endif %}">
-                                        <p>{{ item['message'] }}</p>
-                                        {% if not item['read'] %}
-                                            <form action="{{ url_for('dismiss_user_notification', notification_id=item['id']) }}" method="post">
-                                                <button type="submit" class="text-btn">Dismiss</button>
-                                            </form>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p class="hint">No warnings yet.</p>
-                        {% endif %}
-                    </div>
-                </details>
-                <a class="dash-avatar-link" href="{{ url_for('settings') }}" title="Settings">
-                    {% if user_avatar_url(g.user) %}
-                        <img class="dash-avatar-image" src="{{ user_avatar_url(g.user) }}" alt="">
-                    {% else %}
-                        <div class="dash-avatar">{{ g.user['email'][:1] | upper }}</div>
+                <a class="icon-btn" href="{{ url_for('notifications') }}" aria-label="Alerts">
+                    {% include 'icons/bell.svg' %}
+                    {% if g.unread_count %}
+                        <span class="badge">{{ g.unread_count }}</span>
                     {% endif %}
                 </a>
+                {% set account_switcher_variant = 'dash' %}
+                {% include "_account_switcher.html" %}
             </div>
         </header>
 
-        <main class="dash-content">
+        <main class="dash-content {% block content_class %}{% endblock %}">
+            {% block app_tabs %}
+                {% include "_app_tabs.html" %}
+            {% endblock %}
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -105,7 +106,7 @@
                 {% for category, message in messages %}
                     <aside class="toast toast-{{ category }}" role="status">
                         <div>
-                            <strong>{% if category == 'error' %}Something went wrong{% else %}Done{% endif %}</strong>
+                            <strong>{% if category == 'error' %}{{ t('error') }}{% else %}{{ t('done') }}{% endif %}</strong>
                             <p>{{ message }}</p>
                         </div>
                         <button type="button" class="toast-close" aria-label="Close">×</button>
@@ -114,7 +115,26 @@
             {% endif %}
         {% endwith %}
     </div>
+    <dialog id="image-crop-dialog" class="crop-dialog">
+        <h2 id="image-crop-title">{{ t('crop.title') }}</h2>
+        <p class="hint">{{ t('crop.hint') }}</p>
+        <div class="crop-stage">
+            <div id="image-crop-viewport" class="crop-viewport">
+                <canvas id="image-crop-canvas"></canvas>
+            </div>
+        </div>
+        <label class="crop-control" for="image-crop-zoom">{{ t('crop.zoom') }}</label>
+        <input id="image-crop-zoom" type="range" min="1" max="4" step="0.01">
+        <label class="crop-control" for="image-crop-size">{{ t('crop.size') }}</label>
+        <input id="image-crop-size" type="range" min="400" max="1200" step="20">
+        <p id="image-crop-size-label" class="hint">1200 × 900 px</p>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" id="image-crop-cancel">{{ t('cancel') }}</button>
+            <button type="button" class="btn btn-primary" id="image-crop-apply">{{ t('crop.use') }}</button>
+        </div>
+    </dialog>
     <script src="{{ url_for('static', filename='js/pwa.js') }}" defer></script>
     <script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/image-crop.js') }}" defer></script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+{% set home_tab = request.endpoint in ["index", "home"] %}
+<nav class="app-tabs" aria-label="Main">
+    <a class="app-tab{% if home_tab %} is-active{% endif %}" href="{{ url_for('home') }}">{{ t('nav.welcome') }}</a>
+    <a class="app-tab{% if request.endpoint in ['notifications', 'dismiss_user_notification', 'dismiss_all_user_notifications'] %} is-active{% endif %}" href="{{ url_for('notifications') }}">
+        {{ t('nav.alerts') }}
+        {% if g.unread_count %}
+            <span class="tab-badge">{{ g.unread_count }}</span>
+        {% endif %}
+    </a>
+    <a class="app-tab{% if request.endpoint == 'explore' %} is-active{% endif %}" href="{{ url_for('explore') }}">{{ t('nav.explore') }}</a>
+    <a class="app-tab{% if request.endpoint == 'sell' %} is-active{% endif %}" href="{{ url_for('sell') }}">{{ t('nav.sell') }}</a>
+    <a class="app-tab{% if request.endpoint in ['manage_products', 'edit_product'] %} is-active{% endif %}" href="{{ url_for('manage_products') }}">{{ t('nav.products') }}</a>
+    <a class="app-tab{% if request.endpoint in ['settings', 'settings_password', 'settings_avatar', 'settings_qr', 'settings_language'] %} is-active{% endif %}" href="{{ url_for('settings') }}">{{ t('nav.settings') }}</a>
+    {% if g.user['role'] == 'admin' %}
+        <a class="app-tab{% if request.endpoint == 'admin' %} is-active{% endif %}" href="{{ url_for('admin') }}">{{ t('nav.accounts') }}</a>
+    {% endif %}
+</nav>

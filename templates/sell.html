@@ -1,0 +1,58 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ t('sell.title') }} · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>{{ t('sell.title') }}</h1>
+        <p>{{ t('sell.lede') }}</p>
+    </div>
+</header>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>{{ t('sell.list_title') }}</h2>
+            <p>{{ t('sell.list_lede') }}</p>
+        </div>
+    </div>
+    <form class="settings-form" action="{{ url_for('sell') }}" method="post" enctype="multipart/form-data">
+        <span class="field-label">{{ t('sell.photo') }}</span>
+        {% set photos = [] %}
+        {% set input_id = 'photos' %}
+        {% set required = true %}
+        {% include "_product_photo_picker.html" %}
+        <p class="hint">{{ t('sell.photo_hint') }}</p>
+
+        <label for="name">{{ t('sell.name') }}</label>
+        <input id="name" name="name" type="text" required>
+
+        <label for="price">{{ t('sell.price') }}</label>
+        <input id="price" name="price" type="number" min="1" step="0.01" required>
+
+        <label for="description">{{ t('sell.desc') }}</label>
+        <textarea id="description" name="description" rows="4" required placeholder="{{ t('sell.desc_ph') }}"></textarea>
+
+        <button type="submit" class="btn btn-primary">{{ t('sell.publish') }}</button>
+    </form>
+</section>
+
+<section class="panel">
+    <div class="panel-head">
+        <div>
+            <h2>{{ t('products.title') }}</h2>
+            <p>
+                {% if listings|length == 1 %}
+                    {{ t('sell.manage_one') }}
+                {% else %}
+                    {{ t('sell.manage_count', count=listings|length) }}
+                {% endif %}
+            </p>
+        </div>
+        <a class="btn btn-secondary" href="{{ url_for('manage_products') }}">{{ t('nav.products') }}</a>
+    </div>
+</section>
+{% endblock %}

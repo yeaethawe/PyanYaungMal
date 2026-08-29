@@ -1,82 +1,143 @@
 {% extends "admin_layout.html" %}
+{% from "_file_drop.html" import file_drop with context %}
 
-{% block title %}Settings · PyanYaungMal{% endblock %}
+{% block title %}{{ t('settings.title') }} · PyanYaungMal{% endblock %}
 
 {% block topbar_search %}{% endblock %}
 
 {% block content %}
 <header class="page-head">
     <div>
-        <h1>Settings</h1>
-        <p>Update your profile picture, reset your password, or upgrade this account.</p>
+        <h1>{{ t('settings.title') }}</h1>
+        <p>{{ t('settings.lede') }}</p>
     </div>
 </header>
 
 <section class="panel settings-panel">
     <div class="panel-head">
         <div>
-            <h2>Profile picture</h2>
-            <p>This photo appears in the app header and on the team list.</p>
+            <h2>{{ t('language.title') }}</h2>
+            <p>{{ t('language.lede') }}</p>
+        </div>
+    </div>
+    <form class="settings-form" action="{{ url_for('settings_language') }}" method="post">
+        <div class="lang-options">
+            <button type="submit" name="language" value="en" class="lang-option{% if g.language == 'en' %} is-active{% endif %}">
+                {{ t('language.en') }}
+            </button>
+            <button type="submit" name="language" value="my" class="lang-option{% if g.language == 'my' %} is-active{% endif %}">
+                {{ t('language.my') }}
+            </button>
+        </div>
+    </form>
+</section>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>{{ t('profile.title') }}</h2>
+            <p>{{ t('profile.lede') }}</p>
         </div>
     </div>
     <form class="settings-form" action="{{ url_for('settings_avatar') }}" method="post" enctype="multipart/form-data">
-        <div class="avatar-row">
-            {% if user_avatar_url(g.user) %}
-                <img class="profile-photo" src="{{ user_avatar_url(g.user) }}" alt="Your profile picture">
-            {% else %}
-                <div class="profile-photo profile-photo-fallback">{{ g.user['email'][:1] | upper }}</div>
-            {% endif %}
-            <div>
-                <label for="avatar">Upload image</label>
-                <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required>
-                <p class="hint">JPG, PNG, WEBP, or GIF. Up to 2 MB.</p>
-                <button type="submit" class="btn btn-primary">Save picture</button>
-            </div>
-        </div>
+        {{ file_drop(
+            input_id='avatar',
+            name='avatar',
+            variant='avatar',
+            choose=t('upload.choose'),
+            change=t('upload.change'),
+            preview_id='avatar-preview',
+            preview_src=user_avatar_url(g.user) or '',
+            preview_alt=t('profile.title'),
+            fallback_id='avatar-fallback',
+            fallback_text=(g.user['email'][:1] | upper),
+            required=true,
+            crop_aspect='1:1',
+            crop_shape='circle',
+            crop_min='256',
+            crop_max='800',
+            crop_size='512',
+            crop_title=t('crop.profile'),
+            crop_preview='#avatar-preview',
+            crop_fallback='#avatar-fallback'
+        ) }}
+        <p class="hint">{{ t('profile.hint') }}</p>
+        <button type="submit" class="btn btn-primary">{{ t('profile.save') }}</button>
     </form>
 </section>
 
 <section class="panel settings-panel">
     <div class="panel-head">
         <div>
-            <h2>Reset password</h2>
-            <p>Enter your current password, then choose a new one.</p>
+            <h2>{{ t('qr.title') }}</h2>
+            <p>{{ t('qr.lede') }}</p>
+        </div>
+    </div>
+    <form class="settings-form" action="{{ url_for('settings_qr') }}" method="post" enctype="multipart/form-data">
+        {{ file_drop(
+            input_id='payment_qr',
+            name='payment_qr',
+            variant='qr',
+            choose=t('qr.choose'),
+            change=t('qr.change'),
+            preview_id='qr-preview',
+            preview_src=payment_qr_url(g.user) or '',
+            preview_alt=t('qr.title'),
+            empty_text=t('qr.none'),
+            required=true
+        ) }}
+        <p class="hint">{{ t('qr.hint') }}</p>
+        <button type="submit" class="btn btn-primary">{{ t('qr.save') }}</button>
+    </form>
+</section>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>{{ t('password.title') }}</h2>
+            {% if g.user['auth_provider'] == 'google' %}
+                <p>{{ t('password.google') }}</p>
+            {% else %}
+                <p>{{ t('password.lede') }}</p>
+            {% endif %}
         </div>
     </div>
     <form class="settings-form" action="{{ url_for('settings_password') }}" method="post">
-        <label for="current_password">Current password</label>
-        <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
-        <label for="new_password">New password</label>
+        {% if g.user['auth_provider'] != 'google' %}
+            <label for="current_password">{{ t('password.current') }}</label>
+            <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+        {% endif %}
+        <label for="new_password">{{ t('password.new') }}</label>
         <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
-        <p class="hint">At least 8 characters.</p>
-        <label for="confirm_password">Confirm new password</label>
+        <p class="hint">{{ t('signup.min_chars') }}</p>
+        <label for="confirm_password">{{ t('password.confirm') }}</label>
         <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
-        <button type="submit" class="btn btn-primary">Update password</button>
+        <button type="submit" class="btn btn-primary">{{ t('password.update') }}</button>
     </form>
 </section>
 
 <section class="panel settings-panel">
     <div class="panel-head">
         <div>
-            <h2>Upgrade to admin</h2>
+            <h2>{{ t('upgrade.title') }}</h2>
             {% if g.user['role'] == 'admin' %}
-                <p>This account already has admin access.</p>
+                <p>{{ t('upgrade.already') }}</p>
             {% else %}
-                <p>Enter a reusable 16-character admin key. The same key can be used by more than one person.</p>
+                <p>{{ t('upgrade.lede') }}</p>
             {% endif %}
         </div>
     </div>
     {% if g.user['role'] == 'admin' %}
         <div class="settings-form">
-            <p class="hint">You can manage accounts from Team members.</p>
-            <a class="btn btn-secondary" href="{{ url_for('admin') }}">Open team members</a>
+            <p class="hint">{{ t('upgrade.hint_admin') }}</p>
+            <a class="btn btn-secondary" href="{{ url_for('admin') }}">{{ t('upgrade.open_team') }}</a>
         </div>
     {% else %}
         <form class="settings-form" action="{{ url_for('upgrade') }}" method="post" novalidate>
-            <label for="admin_key">Admin key</label>
+            <label for="admin_key">{{ t('upgrade.key') }}</label>
             <input id="admin_key" name="admin_key" type="text" maxlength="19" autocomplete="off" spellcheck="false" required>
-            <p class="hint">Letters and numbers, with or without dashes.</p>
-            <button type="submit" class="btn btn-primary">Become admin</button>
+            <p class="hint">{{ t('upgrade.key_hint') }}</p>
+            <button type="submit" class="btn btn-primary">{{ t('upgrade.submit') }}</button>
         </form>
     {% endif %}
 </section>

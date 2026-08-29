@@ -1,0 +1,94 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ t('products.title') }} · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>{{ t('products.title') }}</h1>
+        <p>{{ t('products.lede') }}</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('sell') }}">{{ t('products.list') }}</a>
+</header>
+
+<section class="panel panel-menu">
+    <div class="panel-head">
+        <div>
+            <h2>{{ t('products.uploaded') }} <span class="count-badge">{{ listings | length }}</span></h2>
+            <p>{{ t('products.menu_hint') }}</p>
+        </div>
+    </div>
+    {% if listings %}
+        <ul class="manage-list">
+            {% for item in listings %}
+                <li class="manage-row{% if item['status'] == 'sold' %} is-sold{% endif %}">
+                    {% set shots = photos_by_id.get(item['id'], []) %}
+                    <img class="table-thumb" src="{{ product_photo_url((shots[0]['filename'] if shots else item['photo_filename'])) }}" alt="">
+                    <span class="manage-name">
+                        <strong>{{ item['name'] }}</strong>
+                        {% if item['status'] == 'sold' %}
+                            <span class="status-pill">{{ t('sold') }}</span>
+                        {% endif %}
+                    </span>
+                    <details class="row-menu">
+                        <summary class="icon-btn menu-dots" aria-label="{{ item['name'] }}">{% include 'icons/dots.svg' %}</summary>
+                        <div class="row-menu-panel">
+                            <button type="button" class="menu-link detail-open" data-dialog="detail-{{ item['id'] }}">{{ t('products.detail') }}</button>
+                            {% if item['status'] == 'available' %}
+                                <form action="{{ url_for('close_product_route', product_id=item['id']) }}" method="post" onsubmit="return confirm({{ t('products.close_confirm')|tojson }});">
+                                    <button type="submit">{{ t('products.close_selling') }}</button>
+                                </form>
+                                <a class="menu-link" href="{{ url_for('edit_product', product_id=item['id']) }}">{{ t('edit') }}</a>
+                            {% endif %}
+                            <form action="{{ url_for('delete_product_route', product_id=item['id']) }}" method="post" onsubmit="return confirm({{ t('products.delete_confirm')|tojson }});">
+                                <button type="submit" class="is-danger">{{ t('delete') }}</button>
+                            </form>
+                        </div>
+                    </details>
+                </li>
+                <dialog class="product-detail-dialog" id="detail-{{ item['id'] }}">
+                    {% set shots = photos_by_id.get(item['id'], []) %}
+                    <div class="product-gallery{% if shots|length > 1 %} has-many{% endif %}" {% if shots|length > 1 %}data-gallery{% endif %}>
+                        {% for shot in shots %}
+                            <img src="{{ product_photo_url(shot['filename']) }}" alt="{{ item['name'] }}" {% if not loop.first %}hidden{% endif %}>
+                        {% else %}
+                            <img src="{{ product_photo_url(item['photo_filename']) }}" alt="{{ item['name'] }}">
+                        {% endfor %}
+                        {% if shots|length > 1 %}
+                            <button type="button" class="gallery-nav gallery-prev" aria-label="Previous">‹</button>
+                            <button type="button" class="gallery-nav gallery-next" aria-label="Next">›</button>
+                            <span class="gallery-count">1/{{ shots|length }}</span>
+                        {% endif %}
+                    </div>
+                    <h2>{{ item['name'] }}</h2>
+                    <p class="product-price">{{ format_price(item['price']) }}</p>
+                    <p>{{ item['description'] }}</p>
+                    <p class="hint">
+                        {% if item['status'] == 'sold' %}
+                            {{ t('products.sold_record') }}
+                        {% else %}
+                            {{ t('products.selling', date=format_short_date(item['created_at'])) }}
+                        {% endif %}
+                    </p>
+                    <div class="dialog-actions">
+                        {% if item['status'] == 'available' %}
+                            <form action="{{ url_for('close_product_route', product_id=item['id']) }}" method="post" onsubmit="return confirm({{ t('products.close_confirm')|tojson }});">
+                                <button type="submit" class="btn btn-secondary">{{ t('products.close_selling') }}</button>
+                            </form>
+                            <a class="btn btn-secondary" href="{{ url_for('edit_product', product_id=item['id']) }}">{{ t('edit') }}</a>
+                        {% endif %}
+                        <button type="button" class="btn btn-primary detail-close">{{ t('close') }}</button>
+                    </div>
+                </dialog>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="settings-form">
+            <p class="hint">{{ t('products.empty') }}</p>
+            <a class="btn btn-primary" href="{{ url_for('sell') }}">{{ t('products.sell_something') }}</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,26 +1,83 @@
 {% extends "base.html" %}
 
-{% block title %}Home · PyanYaungMal{% endblock %}
+{% block title %}{{ t('welcome.title') }} · PyanYaungMal{% endblock %}
+
+{% block page_class %}page{% endblock %}
 
 {% block content %}
 <section class="card">
-    <h1>Welcome</h1>
-    <p class="lede">
-        You are signed in as <strong>{{ g.user['email'] }}</strong>
-        {% if g.user['role'] == 'admin' %}
-            · <span class="badge">Admin</span>
-        {% else %}
-            · member
+    {% if not g.user %}
+        {% include "_brand_lockup.html" %}
+    {% endif %}
+    <h1>{{ t('welcome.title') }}</h1>
+    <p class="lede">{{ t('welcome.lede') }}</p>
+    {% if g.user %}
+        <p class="lede">
+            {{ t('welcome.signed_in') }} <strong>{{ g.user['email'] }}</strong>
+            {% if g.user['role'] == 'admin' %}
+                · <span class="badge">{{ t('welcome.admin') }}</span>
+            {% else %}
+                · {{ t('welcome.member') }}
+            {% endif %}
+        </p>
+        {% if g.accounts|length > 1 %}
+            <p class="hint">{{ t('welcome.multi', count=g.accounts|length) }}</p>
         {% endif %}
-    </p>
-    <div class="home-actions">
-        <a class="btn btn-primary" href="{{ url_for('settings') }}">Settings</a>
-        {% if g.user['role'] == 'admin' %}
-            <a class="btn btn-ghost" href="{{ url_for('admin') }}">Manage accounts</a>
-        {% endif %}
-    </div>
-    <form action="{{ url_for('logout') }}" method="post">
-        <button type="submit" class="btn btn-ghost">Log out</button>
-    </form>
+        <div class="home-actions">
+            <a class="btn btn-primary" href="{{ url_for('explore') }}">{{ t('nav.explore') }}</a>
+            <a class="btn btn-primary" href="{{ url_for('sell') }}">{{ t('nav.sell') }}</a>
+        </div>
+        <div class="home-actions">
+            <form class="inline-form" action="{{ url_for('add_account') }}" method="post">
+                <button type="submit" class="btn btn-ghost">{{ t('welcome.add_account') }}</button>
+            </form>
+            <form class="inline-form" action="{{ url_for('logout') }}" method="post">
+                <button type="submit" class="btn btn-ghost">{{ t('welcome.logout') }}</button>
+            </form>
+        </div>
+    {% else %}
+        <p class="lede">{{ t('welcome.login_first') }}</p>
+        <div class="home-actions">
+            <a class="btn btn-primary" href="{{ url_for('login') }}">{{ t('welcome.log_in') }}</a>
+            <a class="btn btn-ghost" href="{{ url_for('signup') }}">{{ t('nav.signup') }}</a>
+        </div>
+        <div class="auth-divider"><span>{{ t('welcome.or') }}</span></div>
+        {% include "_google_button.html" %}
+    {% endif %}
+</section>
+
+<section class="card user-guide-card" id="user-guide">
+    <h2>{{ t('guide.title') }}</h2>
+    <p class="lede">{{ t('guide.lede') }}</p>
+    <ol class="user-guide">
+        <li>
+            <strong>{{ t('guide.account.title') }}</strong>
+            <span>{{ t('guide.account.body') }}</span>
+        </li>
+        <li>
+            <strong>{{ t('guide.qr.title') }}</strong>
+            <span>{{ t('guide.qr.body') }}</span>
+        </li>
+        <li>
+            <strong>{{ t('guide.list.title') }}</strong>
+            <span>{{ t('guide.list.body') }}</span>
+        </li>
+        <li>
+            <strong>{{ t('guide.buy.title') }}</strong>
+            <span>{{ t('guide.buy.body') }}</span>
+        </li>
+        <li>
+            <strong>{{ t('guide.pay.title') }}</strong>
+            <span>{{ t('guide.pay.body') }}</span>
+        </li>
+        <li>
+            <strong>{{ t('guide.sold.title') }}</strong>
+            <span>{{ t('guide.sold.body') }}</span>
+        </li>
+        <li>
+            <strong>{{ t('guide.accounts.title') }}</strong>
+            <span>{{ t('guide.accounts.body') }}</span>
+        </li>
+    </ol>
 </section>
 {% endblock %}

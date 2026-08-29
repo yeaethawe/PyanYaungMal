@@ -1,0 +1,53 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ t('chats.title') }} · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>{{ t('chats.title') }}</h1>
+        <p>{{ t('chats.lede') }}</p>
+    </div>
+</header>
+
+<section class="panel">
+    {% if conversations %}
+        <ul class="chat-list">
+            {% for item in conversations %}
+                <li>
+                    <a class="chat-row" href="{{ url_for('chat_detail', conversation_id=item['id']) }}">
+                        <img src="{{ product_photo_url(item['product_photo']) }}" alt="">
+                        <span>
+                            <strong>
+                                {% if item['buyer_id'] == g.user['id'] %}
+                                    {{ display_name(item['seller_email']) }}
+                                {% else %}
+                                    {{ display_name(item['buyer_email']) }}
+                                {% endif %}
+                                {% if item['product_status'] == 'sold' %}
+                                    <span class="status-pill">{{ t('sold') }}</span>
+                                {% endif %}
+                            </strong>
+                            <span class="hint">
+                                {{ item['product_name'] }}
+                                {% if item['last_body'] %}
+                                    · {{ item['last_body'] }}
+                                {% else %}
+                                    · {{ format_price(item['product_price']) }}
+                                {% endif %}
+                            </span>
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="settings-form">
+            <p class="hint">{{ t('chats.empty') }}</p>
+            <a class="btn btn-primary" href="{{ url_for('explore') }}">{{ t('chats.explore') }}</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

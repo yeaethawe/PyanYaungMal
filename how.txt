@@ -1,0 +1,11 @@
+Users must create account first then start buying or selling their products.
+
+For selling they need to upload their payment QR codes first which is K pay or Wave pay.
+Then they need to upload their product photo one photo or multiple photos.
+Then they need to fill the detail discription and pricing of their product.
+
+After a user bought the product, the seller will be informed and let the seller to close selling the product after it is sold out.
+
+User can also sign in new accounts and switch between accounts.
+
+In Myanmar in app purchase is not available in some areas. That is why we use this system.

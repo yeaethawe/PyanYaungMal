@@ -1,10 +1,11 @@
-const CACHE_NAME = "pyanyaungmal-v5";
+const CACHE_NAME = "pyanyaungmal-v27";
 const PRECACHE_URLS = [
   "/offline",
   "/static/style.css",
   "/static/admin.css",
   "/static/js/pwa.js",
   "/static/js/admin.js",
+  "/static/js/image-crop.js",
   "/static/manifest.webmanifest",
   "/static/brand/logo.png",
   "/static/brand/mark.png",
@@ -90,6 +91,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.pathname === "/sw.js") {
+    return;
+  }
+
+  if (url.pathname.includes("/live") || request.headers.get("accept")?.includes("application/json")) {
+    event.respondWith(fetch(request));
     return;
   }
 

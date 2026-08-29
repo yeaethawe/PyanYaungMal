@@ -1,0 +1,38 @@
+{% from "_file_drop.html" import file_drop with context %}
+<div
+    class="photo-picker"
+    data-photo-picker
+    data-max="{{ max_photos|default(6) }}"
+    data-max-message="{{ t('photos.max') }}"
+    data-remove-label="{{ t('delete') }}"
+>
+    <ul class="photo-thumbs" data-photo-thumbs>
+        {% for photo in photos|default([]) %}
+            {% if photo['id'] %}
+                <li class="photo-thumb" data-existing-id="{{ photo['id'] }}">
+                    <img src="{{ product_photo_url(photo['filename']) }}" alt="">
+                    <button type="button" class="photo-thumb-remove" data-remove-existing aria-label="{{ t('delete') }}">×</button>
+                    <input class="visually-hidden" type="checkbox" name="remove_photo" value="{{ photo['id'] }}">
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    {{ file_drop(
+        input_id=input_id|default('photos'),
+        name='photos',
+        variant='photo',
+        choose=t('photos.choose'),
+        change=t('photos.add'),
+        preview_id=preview_id|default('photo-preview'),
+        preview_alt=t('crop.product'),
+        required=required|default(false),
+        multiple=true,
+        drop=t('photos.drop'),
+        crop_aspect='4:3',
+        crop_min='640',
+        crop_max='1600',
+        crop_size='1200',
+        crop_title=t('crop.product'),
+        crop_preview='#' + (preview_id|default('photo-preview'))
+    ) }}
+</div>

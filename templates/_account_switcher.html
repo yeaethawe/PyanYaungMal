@@ -1,0 +1,48 @@
+{% set variant = account_switcher_variant|default('nav') %}
+<details class="account-switcher account-switcher-{{ variant }}">
+    <summary class="account-switcher-trigger" aria-label="{{ t('account.accounts') }}">
+        {% if user_avatar_url(g.user) %}
+            <img class="account-avatar" src="{{ user_avatar_url(g.user) }}" alt="">
+        {% else %}
+            <span class="account-avatar account-avatar-fallback">{{ g.user['email'][:1] | upper }}</span>
+        {% endif %}
+        {% if variant == 'nav' %}
+            <span class="account-switcher-email">{{ g.user['email'] }}</span>
+            {% if g.accounts|length > 1 %}
+                <span class="account-switcher-count">{{ g.accounts|length }}</span>
+            {% endif %}
+        {% endif %}
+    </summary>
+    <div class="account-switcher-panel">
+        <p class="account-switcher-label">{{ t('account.signed_in') }}</p>
+        <p class="account-switcher-active">{{ g.user['email'] }}</p>
+        {% for account in g.accounts %}
+            {% if account['id'] != g.user['id'] %}
+                <form action="{{ url_for('switch_account', user_id=account['id']) }}" method="post">
+                    <button type="submit" class="account-switcher-item">
+                        {% if user_avatar_url(account) %}
+                            <img class="account-avatar account-avatar-sm" src="{{ user_avatar_url(account) }}" alt="">
+                        {% else %}
+                            <span class="account-avatar account-avatar-sm account-avatar-fallback">{{ account['email'][:1] | upper }}</span>
+                        {% endif %}
+                        <span>{{ t('account.switch', email=account['email']) }}</span>
+                    </button>
+                </form>
+            {% endif %}
+        {% endfor %}
+        <form action="{{ url_for('add_account') }}" method="post">
+            <button type="submit" class="account-switcher-item">{{ t('account.add') }}</button>
+        </form>
+        {% if variant == 'dash' %}
+            <a class="account-switcher-item" href="{{ url_for('settings') }}">{{ t('nav.settings') }}</a>
+        {% endif %}
+        <form action="{{ url_for('logout') }}" method="post">
+            <button type="submit" class="account-switcher-item">{{ t('account.logout') }}</button>
+        </form>
+        {% if g.accounts|length > 1 %}
+            <form action="{{ url_for('logout_all') }}" method="post">
+                <button type="submit" class="account-switcher-item account-switcher-danger">{{ t('account.logout_all') }}</button>
+            </form>
+        {% endif %}
+    </div>
+</details>

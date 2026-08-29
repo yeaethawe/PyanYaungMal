@@ -26,6 +26,11 @@ body.dash {
     min-height: 100%;
 }
 
+html[lang="my"],
+html[lang="my"] body.dash {
+    font-family: "Myanmar Text", "Noto Sans Myanmar", Padauk, "Segoe UI", Inter, system-ui, sans-serif;
+}
+
 body.dash {
     display: grid;
     grid-template-columns: 240px 1fr;
@@ -112,6 +117,10 @@ a {
 .dash-nav a.is-active {
     background: #fff;
     color: var(--accent);
+}
+
+.dash-nav .tab-badge {
+    margin-left: auto;
 }
 
 .dash-ico,
@@ -209,6 +218,7 @@ a {
     border-radius: 8px;
     background: transparent;
     color: #404040;
+    text-decoration: none;
     cursor: pointer;
 }
 
@@ -230,6 +240,64 @@ a {
     gap: 1.1rem;
 }
 
+.app-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    overflow-x: auto;
+    margin: 0;
+    padding-bottom: 0.1rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.app-tab {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.48rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+    gap: 0.35rem;
+}
+
+.app-tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.app-tab.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.tab-badge {
+    min-width: 1.15rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.app-tab.is-active .tab-badge {
+    background: #fff;
+    color: var(--accent);
+}
+
+.page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
 .page-head h1 {
     margin: 0 0 0.3rem;
     font-size: 1.7rem;
@@ -248,6 +316,10 @@ a {
     border: 1px solid var(--line);
     border-radius: 16px;
     overflow: hidden;
+}
+
+.panel-menu {
+    overflow: visible;
 }
 
 .panel-head {
@@ -306,6 +378,11 @@ a {
 .btn-light {
     background: #fff;
     color: #171717;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: #fff;
 }
 
 .table-wrap {
@@ -376,6 +453,11 @@ a {
 
 .row-menu {
     position: relative;
+    z-index: 2;
+}
+
+.row-menu[open] {
+    z-index: 40;
 }
 
 .row-menu summary {
@@ -389,14 +471,14 @@ a {
 .row-menu-panel {
     position: absolute;
     right: 0;
-    top: 2.1rem;
-    z-index: 4;
-    min-width: 9rem;
-    padding: 0.35rem;
+    top: calc(100% + 0.35rem);
+    z-index: 50;
+    min-width: 11.5rem;
+    padding: 0.4rem;
     background: #fff;
     border: 1px solid var(--line);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(23, 23, 23, 0.18);
 }
 
 .row-menu-panel form,
@@ -414,7 +496,83 @@ a {
     background: transparent;
     text-align: left;
     font: inherit;
+    color: inherit;
+    text-decoration: none;
     cursor: pointer;
+}
+
+.manage-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.manage-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1.1rem;
+    border-top: 1px solid var(--line);
+    position: relative;
+}
+
+.manage-row:has(.row-menu[open]) {
+    z-index: 30;
+}
+
+.manage-row.is-sold {
+    background: var(--soft);
+}
+
+.manage-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: #eceae6;
+    color: #525252;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
+.menu-dots {
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 1px solid var(--line);
+    background: #fff;
+}
+
+.menu-dots svg {
+    width: 18px;
+    height: 18px;
+}
+
+.product-detail-dialog {
+    width: min(28rem, calc(100% - 2rem));
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.2rem;
+}
+
+.product-detail-dialog::backdrop {
+    background: rgba(23, 23, 23, 0.35);
+}
+
+.product-detail-dialog img {
+    width: 100%;
+    height: 12rem;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--soft);
 }
 
 .row-menu-panel button:hover,
@@ -560,9 +718,15 @@ a {
     margin-top: 0.35rem;
 }
 
+.settings-form .field-label {
+    margin-top: 0.35rem;
+    font-weight: 600;
+}
+
 .settings-form input[type="text"],
 .settings-form input[type="password"],
-.settings-form input[type="file"] {
+.settings-form input[type="number"],
+.settings-form textarea {
     width: min(28rem, 100%);
     padding: 0.65rem 0.7rem;
     border: 1px solid var(--line);
@@ -578,6 +742,180 @@ a {
 .settings-form .btn {
     justify-self: start;
     margin-top: 0.35rem;
+}
+
+.lang-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.lang-option {
+    min-width: 8.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    font: inherit;
+    cursor: pointer;
+    color: var(--ink);
+}
+
+.lang-option:hover {
+    border-color: var(--accent);
+}
+
+.lang-option.is-active {
+    border-color: var(--accent);
+    background: #e8f6fc;
+    box-shadow: inset 0 0 0 1px var(--accent);
+    font-weight: 600;
+}
+
+.file-drop {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: min(36rem, 100%);
+    margin: 0.15rem 0 0.35rem;
+    padding: 0.9rem 1rem;
+    border: 1.5px dashed var(--line);
+    border-radius: 16px;
+    background: var(--soft);
+    cursor: pointer;
+    color: inherit;
+    text-align: left;
+    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.file-drop:hover,
+.file-drop:focus-within {
+    border-color: var(--accent);
+    background: #eef8fc;
+    box-shadow: 0 0 0 4px rgba(0, 160, 224, 0.1);
+}
+
+.file-drop.is-dragover {
+    border-style: solid;
+    border-color: var(--accent);
+    background: #e4f5fb;
+}
+
+.file-drop.has-file {
+    border-style: solid;
+    border-color: #8fd39a;
+    background: #f3faf4;
+}
+
+.file-drop-frame {
+    position: relative;
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--line);
+}
+
+.file-drop-avatar .file-drop-frame {
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 999px;
+}
+
+.file-drop-qr .file-drop-frame {
+    width: 6.5rem;
+    height: 6.5rem;
+    border-radius: 14px;
+}
+
+.file-drop-photo {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 0.75rem;
+}
+
+.file-drop-photo .file-drop-frame {
+    width: 100%;
+    height: 11rem;
+    border-radius: 12px;
+}
+
+.file-drop-frame .file-drop-preview,
+.file-drop-frame .profile-photo,
+.file-drop-frame .qr-preview,
+.file-drop-frame .edit-preview,
+.file-drop-frame .profile-photo-fallback {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+}
+
+.file-drop-qr .file-drop-preview,
+.file-drop-qr .qr-preview {
+    object-fit: contain;
+    background: #fff;
+}
+
+.file-drop-placeholder svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.file-drop-placeholder,
+.file-drop-fallback {
+    display: grid;
+    place-items: center;
+    gap: 0.35rem;
+    width: 100%;
+    height: 100%;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-align: center;
+    padding: 0.4rem;
+}
+
+.file-drop.has-preview .file-drop-placeholder,
+.file-drop.has-preview .file-drop-fallback {
+    display: none;
+}
+
+.file-drop-copy {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.file-drop-title {
+    font-weight: 650;
+}
+
+.file-drop-sub,
+.file-drop-name {
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.file-drop.has-file .file-drop-name {
+    color: #2f7d3e;
+}
+
+.file-drop-photo .file-drop-copy {
+    justify-items: center;
+}
+
+@media (max-width: 520px) {
+    .file-drop-avatar,
+    .file-drop-qr {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .file-drop-avatar .file-drop-copy,
+    .file-drop-qr .file-drop-copy {
+        justify-items: center;
+    }
 }
 
 .avatar-row {
@@ -716,4 +1054,790 @@ a {
         flex-direction: column;
         align-items: stretch;
     }
+}
+
+.explore-search {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1.2rem 1rem;
+}
+
+.explore-search .field-search {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+
+.explore-search-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+    padding: 0;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1rem;
+}
+
+.product-card {
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+
+.product-card img,
+.product-gallery img,
+.table-thumb {
+    width: 100%;
+    height: 11rem;
+    object-fit: cover;
+    background: var(--soft);
+}
+
+.product-gallery {
+    position: relative;
+}
+
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-top: -0.9rem;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(23, 23, 23, 0.55);
+    color: #fff;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.gallery-prev {
+    left: 0.45rem;
+}
+
+.gallery-next {
+    right: 0.45rem;
+}
+
+.gallery-count {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(23, 23, 23, 0.55);
+    color: #fff;
+    font-size: 0.72rem;
+}
+
+.photo-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    list-style: none;
+    margin: 0 0 0.65rem;
+    padding: 0;
+}
+
+.photo-thumbs:empty {
+    display: none;
+}
+
+.photo-thumb {
+    position: relative;
+    width: 5.5rem;
+    height: 4.1rem;
+}
+
+.photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+}
+
+.photo-thumb.is-removed img {
+    opacity: 0.35;
+}
+
+.photo-thumb-remove {
+    position: absolute;
+    top: -0.35rem;
+    right: -0.35rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.product-card-body {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1rem 1.1rem 1.15rem;
+}
+
+.product-card-body h2 {
+    margin: 0;
+}
+
+.product-price {
+    margin: 0;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.table-thumb {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 8px;
+}
+
+.desc-cell {
+    max-width: 16rem;
+    white-space: normal;
+}
+
+.edit-preview {
+    width: 200px;
+    height: 150px;
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--soft);
+}
+
+.qr-preview,
+.qr-preview-empty,
+.qr-image {
+    width: 8rem;
+    height: 8rem;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+}
+
+.qr-preview-empty {
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.chat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.alert-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.alert-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.alert-row:last-child {
+    border-bottom: 0;
+}
+
+.alert-row p {
+    margin: 0;
+}
+
+.alert-row > div {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.alert-row.is-read {
+    opacity: 0.65;
+}
+
+.chat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1.1rem;
+    border-top: 1px solid var(--line);
+    text-decoration: none;
+}
+
+.chat-row img {
+    width: 3.2rem;
+    height: 3.2rem;
+    object-fit: cover;
+    border-radius: 999px;
+}
+
+.chat-row span {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.chat-product {
+    display: grid;
+    grid-template-columns: 4.75rem 1fr;
+    align-items: start;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+}
+
+.chat-product > img {
+    width: 4.75rem;
+    height: 4.75rem;
+    object-fit: cover;
+    border-radius: 10px;
+    background: var(--soft);
+}
+
+.chat-product-copy {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.chat-product-desc {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.chat-pay {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.55rem 0.75rem;
+    margin-top: 0.2rem;
+    padding-top: 0.55rem;
+    border-top: 1px solid var(--line);
+}
+
+.chat-pay-label {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.chat-pay .hint {
+    margin: 0.15rem 0 0;
+}
+
+.qr-box {
+    margin-top: 0.8rem;
+}
+
+.qr-dialog {
+    width: min(17rem, calc(100% - 2rem));
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1rem 1.1rem 1.1rem;
+}
+
+.qr-dialog::backdrop {
+    background: rgba(23, 23, 23, 0.45);
+}
+
+.qr-dialog h2 {
+    margin: 0 0 0.25rem;
+}
+
+.qr-dialog img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: min(48vh, 18rem);
+    margin: 0.7rem auto 0.85rem;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 12px;
+}
+
+.dash-content-chat {
+    width: min(44rem, calc(100% - 1.5rem));
+    margin: 0.7rem auto 0.9rem;
+    display: flex;
+    min-height: calc(100vh - 4.6rem);
+    gap: 0;
+}
+
+.tg-chat {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    background: #cfe6f0;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.tg-head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.7rem;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+}
+
+.tg-back {
+    flex: 0 0 auto;
+    width: 1.8rem;
+    font-size: 1.6rem;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    color: var(--accent);
+}
+
+.tg-head img {
+    width: 2.4rem;
+    height: 2.4rem;
+    object-fit: cover;
+    border-radius: 999px;
+    background: var(--soft);
+}
+
+.tg-head-copy {
+    min-width: 0;
+    flex: 1;
+}
+
+.tg-head-copy strong,
+.tg-head-copy p {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tg-head-copy p {
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.tg-qr-btn {
+    flex: 0 0 auto;
+    padding: 0.35rem 0.7rem;
+}
+
+.tg-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 0 0 auto;
+}
+
+.tg-end-form {
+    margin: 0;
+}
+
+.tg-end-btn {
+    padding: 0.35rem 0.7rem;
+}
+
+.chat-day {
+    justify-self: center;
+    margin: 0.55rem 0 0.25rem;
+}
+
+.chat-day span {
+    display: inline-block;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(23, 23, 23, 0.28);
+    color: #fff;
+    font-size: 0.72rem;
+}
+
+.chat-empty {
+    justify-self: center;
+    margin-top: 2rem;
+    color: #4a6a78;
+}
+
+.message-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.55rem 0.75rem 0.85rem;
+    display: grid;
+    align-content: start;
+    gap: 0;
+    flex: 1;
+    overflow-y: auto;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.35), transparent 18%),
+        radial-gradient(circle at 88% 82%, rgba(95, 194, 74, 0.12), transparent 22%),
+        #cfe6f0;
+}
+
+.message {
+    justify-self: start;
+    width: fit-content;
+    max-width: min(78%, 22rem);
+    margin-top: 0.45rem;
+    padding: 0.4rem 0.55rem 0.22rem 0.6rem;
+    border-radius: 14px 14px 14px 5px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(23, 23, 23, 0.08);
+}
+
+.message.is-mine {
+    justify-self: end;
+    background: #d7f4c8;
+    border-radius: 14px 14px 5px 14px;
+}
+
+.message.is-follow {
+    margin-top: 0.12rem;
+}
+
+.message:not(.is-mine).is-follow {
+    border-top-left-radius: 6px;
+}
+
+.message.is-mine.is-follow {
+    border-top-right-radius: 6px;
+}
+
+.message p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.message time {
+    display: block;
+    margin-top: 0.12rem;
+    font-size: 0.68rem;
+    color: #6b8a96;
+    text-align: right;
+}
+
+.payment-shot {
+    display: block;
+    width: min(14rem, 100%);
+    height: auto;
+    margin: 0.05rem 0 0.3rem;
+    border-radius: 10px;
+}
+
+.chat-compose {
+    display: grid;
+    gap: 0.3rem;
+    padding: 0.5rem 0.6rem max(0.65rem, env(safe-area-inset-bottom));
+    background: #f4f7f8;
+    border-top: 1px solid var(--line);
+}
+
+.chat-status-bar {
+    margin: 0;
+    padding: 0.75rem 0.9rem max(0.75rem, env(safe-area-inset-bottom));
+    background: #fff;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.chat-status-bar-action {
+    display: grid;
+    gap: 0.55rem;
+    padding-bottom: 0.75rem;
+    background: #eef8e9;
+    border-top-color: #cfe6c8;
+}
+
+.chat-status-bar-action p {
+    margin: 0;
+    color: var(--ink);
+}
+
+.chat-status-bar-action .btn {
+    justify-self: start;
+}
+
+.chat-compose-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.6rem;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.chat-input-wrap {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 0 0.15rem 0 0.1rem;
+}
+
+.chat-input-wrap input[type="text"] {
+    flex: 1 1 auto;
+    width: 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0.55rem 0.7rem 0.55rem 0.2rem;
+    border: 0;
+    border-radius: 0;
+    font: inherit;
+    font-size: 16px;
+    background: transparent;
+    outline: none;
+}
+
+.chat-attach,
+.chat-send {
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    min-width: 2.6rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.chat-attach {
+    color: #5a7a88;
+    background: transparent;
+}
+
+.chat-send {
+    background: var(--accent);
+    color: #fff;
+}
+
+.chat-attach svg,
+.chat-send svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+    pointer-events: none;
+}
+
+.chat-attach input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.chat-attach-name {
+    margin: 0;
+    padding: 0 0.45rem;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    .chat-product {
+        grid-template-columns: 4.75rem 1fr;
+    }
+
+    .dash-content-chat {
+        width: calc(100% - 1rem);
+        margin-left: auto;
+        margin-right: auto;
+        min-height: calc(100vh - 4.2rem);
+    }
+
+    .tg-chat {
+        border-radius: 12px;
+    }
+
+    .chat-compose-bar {
+        grid-template-columns: minmax(0, 1fr) 2.75rem;
+    }
+}
+
+.account-switcher {
+    position: relative;
+}
+
+.account-switcher-trigger {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    cursor: pointer;
+}
+
+.account-switcher-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.account-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+.account-avatar-sm {
+    width: 1.6rem;
+    height: 1.6rem;
+}
+
+.account-avatar-fallback {
+    display: grid;
+    place-items: center;
+    background: #eceae6;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.account-switcher-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    z-index: 8;
+    width: min(18rem, 80vw);
+    padding: 0.85rem;
+    display: grid;
+    gap: 0.35rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.account-switcher-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.account-switcher-active {
+    margin: 0 0 0.35rem;
+    font-weight: 600;
+    word-break: break-all;
+}
+
+.account-switcher-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.45rem 0.5rem;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.account-switcher-item:hover {
+    background: var(--soft);
+}
+
+.account-switcher-danger {
+    color: var(--danger);
+}
+
+.crop-dialog {
+    width: min(28rem, calc(100% - 1.5rem));
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.15rem 1.2rem 1.2rem;
+    color: var(--ink);
+    font: inherit;
+}
+
+.crop-dialog input[type="range"] {
+    width: 100%;
+    margin: 0.15rem 0 0.2rem;
+}
+
+.crop-dialog::backdrop {
+    background: rgba(23, 23, 23, 0.45);
+}
+
+.crop-dialog h2 {
+    margin: 0 0 0.25rem;
+}
+
+.crop-stage {
+    display: grid;
+    place-items: center;
+    margin: 0.85rem 0 0.9rem;
+    padding: 0.85rem;
+    background: #111;
+    border-radius: 14px;
+}
+
+.crop-viewport {
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+    background: #000;
+    border-radius: 8px;
+}
+
+.crop-viewport.is-circle {
+    border-radius: 999px;
+}
+
+.crop-viewport:active {
+    cursor: grabbing;
+}
+
+.crop-viewport canvas {
+    display: block;
+}
+
+.crop-control {
+    margin-top: 0.45rem;
 }

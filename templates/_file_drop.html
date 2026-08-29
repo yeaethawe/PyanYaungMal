@@ -1,0 +1,78 @@
+{% macro file_drop(
+    input_id,
+    name,
+    variant,
+    choose,
+    change,
+    preview_id,
+    preview_src='',
+    preview_alt='',
+    fallback_id='',
+    fallback_text='',
+    empty_text='',
+    required=false,
+    crop_aspect='',
+    crop_shape='',
+    crop_min='',
+    crop_max='',
+    crop_size='',
+    crop_title='',
+    crop_preview='',
+    crop_fallback='',
+    multiple=false,
+    drop=''
+) %}
+{% set has_preview = preview_src %}
+<label
+    class="file-drop file-drop-{{ variant }}{% if has_preview %} has-preview{% endif %}"
+    data-file-drop
+    data-choose="{{ choose }}"
+    data-change="{{ change }}"
+    data-drop="{{ drop or t('upload.drop') }}"
+    data-ready="{{ t('upload.ready') }}"
+    data-picked="{{ t('upload.picked') }}"
+    for="{{ input_id }}"
+>
+    <input
+        id="{{ input_id }}"
+        class="file-drop-input visually-hidden"
+        name="{{ name }}"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        {% if multiple %}multiple{% endif %}
+        {% if required %}required{% endif %}
+        {% if crop_aspect %}
+            data-image-crop
+            data-crop-aspect="{{ crop_aspect }}"
+            {% if crop_shape %}data-crop-shape="{{ crop_shape }}"{% endif %}
+            data-crop-min="{{ crop_min }}"
+            data-crop-max="{{ crop_max }}"
+            data-crop-size="{{ crop_size }}"
+            data-crop-title="{{ crop_title }}"
+            data-crop-preview="{{ crop_preview }}"
+            {% if crop_fallback %}data-crop-fallback="{{ crop_fallback }}"{% endif %}
+        {% endif %}
+    >
+    <span class="file-drop-frame" aria-hidden="true">
+        <img
+            class="file-drop-preview{% if variant == 'avatar' %} profile-photo{% elif variant == 'qr' %} qr-preview{% else %} edit-preview{% endif %}"
+            id="{{ preview_id }}"
+            alt="{{ preview_alt }}"
+            {% if preview_src %}src="{{ preview_src }}"{% else %}hidden{% endif %}
+        >
+        {% if fallback_id %}
+            <span class="file-drop-fallback profile-photo-fallback" id="{{ fallback_id }}" {% if has_preview %}hidden{% endif %}>{{ fallback_text }}</span>
+        {% else %}
+            <span class="file-drop-placeholder" {% if has_preview %}hidden{% endif %}>
+                {% include 'icons/image.svg' %}
+                {% if empty_text %}<span>{{ empty_text }}</span>{% endif %}
+            </span>
+        {% endif %}
+    </span>
+    <span class="file-drop-copy">
+        <strong class="file-drop-title">{{ change if has_preview else choose }}</strong>
+        <span class="file-drop-sub">{{ drop or t('upload.drop') }}</span>
+        <span class="file-drop-name" hidden></span>
+    </span>
+</label>
+{% endmacro %}

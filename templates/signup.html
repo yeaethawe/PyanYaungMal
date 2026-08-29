@@ -1,25 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Sign up · PyanYaungMal{% endblock %}
+{% block title %}{{ t('signup.title') }} · PyanYaungMal{% endblock %}
 
 {% block content %}
 <section class="card">
     {% include "_brand_lockup.html" %}
-    <h1>Create an account</h1>
-    <p class="lede">Sign up with your email and a password.</p>
+    <h1>{% if g.adding_account %}{{ t('signup.add') }}{% else %}{{ t('signup.title') }}{% endif %}</h1>
+    {% include "_add_account_banner.html" %}
+    {% if not g.adding_account %}
+        <p class="lede">{{ t('signup.lede') }}</p>
+    {% endif %}
+    {% include "_google_button.html" %}
+    <div class="auth-divider"><span>{{ t('login.or_email') }}</span></div>
     <form method="post" novalidate>
-        <label for="email">Email</label>
+        <label for="email">{{ t('login.email') }}</label>
         <input id="email" name="email" type="email" autocomplete="email" required>
 
-        <label for="password">Password</label>
+        <label for="password">{{ t('login.password') }}</label>
         <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
-        <p class="hint">At least 8 characters.</p>
+        <p class="hint">{{ t('signup.min_chars') }}</p>
 
-        <label for="confirm_password">Confirm password</label>
+        <label for="confirm_password">{{ t('signup.confirm') }}</label>
         <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
 
-        <button type="submit" class="btn btn-primary btn-block">Sign up</button>
+        <button type="submit" class="btn btn-primary btn-block">{{ t('signup.submit') }}</button>
     </form>
-    <p class="switch">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+    <p class="switch">{{ t('signup.have_account') }} <a href="{{ url_for('login') }}">{{ t('login.submit') }}</a></p>
 </section>
 {% endblock %}

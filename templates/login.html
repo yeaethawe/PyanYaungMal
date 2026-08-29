@@ -1,21 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}Log in · PyanYaungMal{% endblock %}
+{% block title %}{{ t('login.title') }} · PyanYaungMal{% endblock %}
 
 {% block content %}
 <section class="card">
     {% include "_brand_lockup.html" %}
-    <h1>Log in</h1>
-    <p class="lede">Welcome back. Enter your email and password.</p>
+    <h1>{% if g.adding_account %}{{ t('login.add') }}{% else %}{{ t('login.title') }}{% endif %}</h1>
+    {% include "_add_account_banner.html" %}
+    {% if not g.adding_account %}
+        <p class="lede">{{ t('welcome.login_first') }}</p>
+    {% endif %}
+    {% include "_google_button.html" %}
+    <div class="auth-divider"><span>{{ t('login.or_email') }}</span></div>
     <form method="post" novalidate>
-        <label for="email">Email</label>
+        <label for="email">{{ t('login.email') }}</label>
         <input id="email" name="email" type="email" autocomplete="email" required>
 
-        <label for="password">Password</label>
+        <label for="password">{{ t('login.password') }}</label>
         <input id="password" name="password" type="password" autocomplete="current-password" required>
 
-        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        <button type="submit" class="btn btn-primary btn-block">{{ t('login.submit') }}</button>
     </form>
-    <p class="switch">Need an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
+    <p class="switch">{{ t('login.need_account') }} <a href="{{ url_for('signup') }}">{{ t('nav.signup') }}</a></p>
 </section>
 {% endblock %}

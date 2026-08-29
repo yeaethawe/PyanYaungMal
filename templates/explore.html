@@ -1,0 +1,68 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ t('explore.title') }} · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>{{ t('explore.title') }}</h1>
+        <p>{{ t('explore.lede') }}</p>
+    </div>
+</header>
+
+<form id="explore-search" class="panel explore-search" method="get" action="{{ url_for('explore') }}">
+    <label class="field-search">
+        <span class="dash-ico" aria-hidden="true">{% include 'icons/search.svg' %}</span>
+        <input name="q" type="search" value="{{ query }}" placeholder="{{ t('explore.search') }}" autocomplete="off">
+    </label>
+    <div class="panel-actions explore-search-actions">
+        <button type="submit" class="btn btn-primary">{{ t('search') }}</button>
+        {% if query %}
+            <a class="btn btn-secondary" href="{{ url_for('explore') }}">{{ t('clear') }}</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+            <article class="product-card">
+                {% set shots = photos_by_id.get(product['id'], []) %}
+                <div class="product-gallery{% if shots|length > 1 %} has-many{% endif %}" {% if shots|length > 1 %}data-gallery{% endif %}>
+                    {% for shot in shots %}
+                        <img src="{{ product_photo_url(shot['filename']) }}" alt="{{ product['name'] }}" {% if not loop.first %}hidden{% endif %}>
+                    {% else %}
+                        <img src="{{ product_photo_url(product['photo_filename']) }}" alt="{{ product['name'] }}">
+                    {% endfor %}
+                    {% if shots|length > 1 %}
+                        <button type="button" class="gallery-nav gallery-prev" aria-label="Previous">‹</button>
+                        <button type="button" class="gallery-nav gallery-next" aria-label="Next">›</button>
+                        <span class="gallery-count">1/{{ shots|length }}</span>
+                    {% endif %}
+                </div>
+                <div class="product-card-body">
+                    <h2>{{ product['name'] }}</h2>
+                    <p class="product-price">{{ format_price(product['price']) }}</p>
+                    <p>{{ product['description'] }}</p>
+                    <p class="hint">{{ t('explore.seller') }}: {{ display_name(product['seller_email']) }}</p>
+                    {% if g.user and g.user['id'] == product['seller_id'] %}
+                        <p class="hint">{{ t('explore.yours') }}</p>
+                    {% else %}
+                        <form action="{{ url_for('buy_product', product_id=product['id']) }}" method="post">
+                            <button type="submit" class="btn btn-primary btn-block">{{ t('buy') }}</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="panel">
+        <div class="settings-form">
+            <p class="hint">{% if query %}{{ t('explore.none_search') }}{% else %}{{ t('explore.none') }}{% endif %}</p>
+        </div>
+    </section>
+{% endif %}
+{% endblock %}

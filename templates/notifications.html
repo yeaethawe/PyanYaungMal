@@ -1,0 +1,49 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ t('alerts.title') }} · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>{{ t('alerts.title') }}</h1>
+        <p>{{ t('alerts.lede') }}</p>
+    </div>
+    {% if g.unread_count %}
+        <form action="{{ url_for('dismiss_all_user_notifications') }}" method="post">
+            <button type="submit" class="btn btn-secondary">{{ t('alerts.mark_all') }}</button>
+        </form>
+    {% endif %}
+</header>
+
+<section class="panel">
+    {% if g.notifications %}
+        <ul class="alert-list">
+            {% for item in g.notifications %}
+                <li class="alert-row {% if item['read'] %}is-read{% endif %}">
+                    <div>
+                        {% if item['link'] %}
+                            <a href="{{ item['link'] }}">{{ item['message'] }}</a>
+                        {% else %}
+                            <p>{{ item['message'] }}</p>
+                        {% endif %}
+                        <p class="hint">{{ format_short_date(item['created_at']) }}</p>
+                    </div>
+                    {% if not item['read'] %}
+                        <form action="{{ url_for('dismiss_user_notification', notification_id=item['id']) }}" method="post">
+                            <button type="submit" class="btn btn-ghost">{{ t('dismiss') }}</button>
+                        </form>
+                    {% else %}
+                        <span class="hint">{{ t('read') }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="settings-form">
+            <p class="hint">{{ t('alerts.empty') }}</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

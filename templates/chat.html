@@ -1,0 +1,114 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ conversation['product_name'] }} · Chat{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+{% block app_tabs %}{% endblock %}
+{% block content_class %}dash-content-chat{% endblock %}
+
+{% block content %}
+{% set other_email = conversation['seller_email'] if g.user['id'] == conversation['buyer_id'] else conversation['buyer_email'] %}
+<div class="tg-chat">
+    <header class="tg-head">
+        <a class="tg-back" href="{{ url_for('chats') }}" aria-label="All chats">‹</a>
+        <img src="{{ product_photo_url(conversation['product_photo']) }}" alt="">
+        <div class="tg-head-copy">
+            <strong>{{ display_name(other_email) }}</strong>
+            <p>
+                {{ conversation['product_name'] }}
+                · {{ format_price(conversation['product_price']) }}
+                {% if conversation['product_status'] == 'sold' %}
+                    · {{ t('sold') }}
+                {% endif %}
+            </p>
+        </div>
+        <div class="tg-head-actions">
+            {% if conversation['seller_qr'] %}
+                <button type="button" class="btn btn-primary tg-qr-btn detail-open" data-dialog="payment-qr-dialog">{{ t('chat.qr') }}</button>
+            {% endif %}
+            {% if is_seller and not chat_ended %}
+                <form
+                    class="tg-end-form"
+                    action="{{ url_for('end_conversation', conversation_id=conversation['id']) }}"
+                    method="post"
+                    onsubmit="return confirm({{ (t('chat.end_confirm') if can_end_sale else t('chat.end_chat_confirm'))|tojson }});"
+                >
+                    <button type="submit" class="btn btn-secondary tg-end-btn">{{ t('chat.end') }}</button>
+                </form>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if conversation['seller_qr'] %}
+        <dialog id="payment-qr-dialog" class="qr-dialog">
+            <h2>{{ t('chat.qr_title') }}</h2>
+            <p class="hint">{{ t('chat.qr_hint') }}</p>
+            <img src="{{ url_for('qr_file', filename=conversation['seller_qr']) }}" alt="{{ t('chat.qr_title') }}">
+            <div class="dialog-actions">
+                <button type="button" class="btn btn-primary detail-close">{{ t('close') }}</button>
+            </div>
+        </dialog>
+    {% endif %}
+
+    <ol
+        class="message-list"
+        id="message-list"
+        data-live-url="{{ url_for('chat_live', conversation_id=conversation['id']) }}"
+        data-send-url="{{ url_for('chat_detail', conversation_id=conversation['id']) }}"
+        data-ended="{{ '1' if chat_ended else '0' }}"
+        data-can-end-sale="{{ '1' if can_end_sale else '0' }}"
+        data-empty="{{ t('chat.empty') }}"
+        data-photo-alt="{{ t('chat.photo') }}"
+    >
+        {% set ns = namespace(day='', last=none) %}
+        {% for item in messages %}
+            {% set day = format_chat_day(item['created_at']) %}
+            {% if day != ns.day %}
+                {% set ns.day = day %}
+                {% set ns.last = none %}
+                <li class="chat-day"><span>{{ day }}</span></li>
+            {% endif %}
+            <li
+                class="message{% if item['sender_id'] == g.user['id'] %} is-mine{% endif %}{% if ns.last == item['sender_id'] %} is-follow{% endif %}"
+                data-message-id="{{ item['id'] }}"
+                data-sender="{{ item['sender_id'] }}"
+                data-day="{{ day }}"
+            >
+                {% if item['screenshot_filename'] %}
+                    <a href="{{ url_for('payment_file', filename=item['screenshot_filename']) }}" target="_blank" rel="noopener">
+                        <img class="payment-shot" src="{{ url_for('payment_file', filename=item['screenshot_filename']) }}" alt="{{ t('chat.photo') }}">
+                    </a>
+                {% endif %}
+                {% if item['body'] %}
+                    <p>{{ item['body'] }}</p>
+                {% endif %}
+                <time>{{ format_message_time(item['created_at']) }}</time>
+            </li>
+            {% set ns.last = item['sender_id'] %}
+        {% else %}
+            <li class="chat-empty">{{ t('chat.empty') }}</li>
+        {% endfor %}
+    </ol>
+
+    {% if chat_ended %}
+        <p class="chat-status-bar">{{ t('chat.ended') }}</p>
+    {% else %}
+    <form class="chat-compose" id="chat-compose" method="post" enctype="multipart/form-data">
+        <p id="screenshot-name" class="chat-attach-name hint" hidden></p>
+        <div class="chat-compose-bar">
+            <div class="chat-input-wrap">
+                <label class="chat-attach" for="screenshot" title="{{ t('chat.attach') }}">
+                    <span class="visually-hidden">{{ t('chat.attach') }}</span>
+                    {% include 'icons/attach.svg' %}
+                    <input id="screenshot" name="screenshot" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+                </label>
+                <input id="body" name="body" type="text" placeholder="{{ t('chat.message') }}" autocomplete="off">
+            </div>
+            <button type="submit" class="chat-send" aria-label="{{ t('chat.send') }}">
+                {% include 'icons/send.svg' %}
+            </button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

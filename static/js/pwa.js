@@ -60,4 +60,12 @@
       installBanner.hidden = true;
     }
   });
+
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll("details.account-switcher[open]").forEach((menu) => {
+      if (!menu.contains(event.target)) {
+        menu.removeAttribute("open");
+      }
+    });
+  });
 })();

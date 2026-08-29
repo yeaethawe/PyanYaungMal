@@ -1,0 +1,50 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}{{ t('edit.title') }} · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>{{ t('edit.title') }}</h1>
+        <p>{{ t('edit.lede') }}</p>
+    </div>
+    <a class="btn btn-secondary" href="{{ url_for('manage_products') }}">{{ t('edit.back') }}</a>
+</header>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>{{ product['name'] }}</h2>
+            <p>
+                {% if product['status'] == 'sold' %}
+                    {{ t('edit.closed') }}
+                {% else %}
+                    {{ t('edit.keep_photo') }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <form class="settings-form" action="{{ url_for('edit_product', product_id=product['id']) }}" method="post" enctype="multipart/form-data">
+        {% set input_id = 'photos' %}
+        {% set required = false %}
+        {% include "_product_photo_picker.html" %}
+        <p class="hint">{{ t('edit.photo_hint') }}</p>
+
+        <label for="name">{{ t('edit.name') }}</label>
+        <input id="name" name="name" type="text" value="{{ product['name'] }}" required>
+
+        <label for="price">{{ t('edit.price') }}</label>
+        <input id="price" name="price" type="number" min="1" step="0.01" value="{{ product['price'] }}" required>
+
+        <label for="description">{{ t('edit.desc') }}</label>
+        <textarea id="description" name="description" rows="4" required>{{ product['description'] }}</textarea>
+
+        <div class="action-row">
+            <button type="submit" class="btn btn-primary">{{ t('edit.save') }}</button>
+            <a class="btn btn-secondary" href="{{ url_for('manage_products') }}">{{ t('cancel') }}</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
