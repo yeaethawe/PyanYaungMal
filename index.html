@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#00a0e0">
+  <title>Pyan Yaung Mal — Resell · Renew · Reuse</title>
+  <meta name="description" content="A marketplace for buying and selling used products in Myanmar. Pay with KBZ Pay or Wave Pay QR.">
+  <meta property="og:title" content="Pyan Yaung Mal">
+  <meta property="og:description" content="Resell · Renew · Reuse. Used products, QR payments, and chat in Myanmar.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%2300a0e0'/%3E%3Ccircle cx='32' cy='32' r='18' fill='%235fc24a'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #eef8fb;
+      --ink: #12324a;
+      --muted: #5a7a88;
+      --accent: #00a0e0;
+      --green: #5fc24a;
+      --coral: #ff6b4a;
+      --gold: #ffe066;
+      --card: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--ink);
+      font-family: "Segoe UI", Inter, system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top right, #d7f4c8, transparent 34%),
+        radial-gradient(circle at top left, #c8eefb, transparent 32%),
+        var(--bg);
+    }
+
+    .wrap {
+      width: min(980px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.5rem 0 3rem;
+    }
+
+    .hero {
+      display: block;
+      width: 100%;
+      border-radius: 28px;
+      box-shadow: 0 16px 40px rgba(0, 96, 140, 0.18);
+    }
+
+    h1 {
+      margin: 1.4rem 0 0.35rem;
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 span { color: var(--accent); }
+    h1 em { font-style: normal; color: var(--green); }
+
+    .tagline {
+      margin: 0 0 1.75rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 0.45rem 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .pill.resell { background: var(--coral); }
+    .pill.renew { background: var(--green); color: #14532d; }
+    .pill.reuse { background: var(--gold); color: #7a4e00; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 1.2rem;
+      box-shadow: 0 10px 30px rgba(0, 96, 140, 0.08);
+    }
+
+    .card h2 { margin: 0 0 0.5rem; font-size: 1.15rem; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.45; }
+
+    .steps, .note {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 1.4rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 96, 140, 0.08);
+      margin-bottom: 1rem;
+    }
+
+    .steps h2, .note h2 { margin: 0 0 0.8rem; }
+
+    ol {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    li + li { margin-top: 0.55rem; }
+
+    .note {
+      border-left: 6px solid var(--accent);
+    }
+
+    .note.local {
+      border-left-color: var(--coral);
+      background: #fff6f2;
+    }
+
+    .note p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+    .local-link {
+      display: block;
+      margin: 1rem 0 0;
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.15rem;
+      text-align: center;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      word-break: break-all;
+    }
+
+    .local-link:hover { background: #0088c2; }
+
+    .local-hint {
+      margin: 0.65rem 0 0;
+      text-align: center;
+      font-size: 0.92rem;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    footer a { color: var(--accent); }
+
+    @media (max-width: 760px) {
+      .cards { grid-template-columns: 1fr; }
+      h1 { font-size: 1.45rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <svg class="hero" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="Pyan Yaung Mal. Resell, Renew, Reuse.">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#0077c8"/>
+          <stop offset="42%" stop-color="#00a0e0"/>
+          <stop offset="72%" stop-color="#3ecf8e"/>
+          <stop offset="100%" stop-color="#5fc24a"/>
+        </linearGradient>
+        <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#b8f26a"/>
+          <stop offset="55%" stop-color="#5ce1ff"/>
+          <stop offset="100%" stop-color="#ffd166"/>
+        </linearGradient>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="18"/>
+        </filter>
+      </defs>
+      <rect width="1200" height="420" rx="36" fill="url(#sky)"/>
+      <circle cx="1080" cy="-20" r="180" fill="#fff176" opacity="0.22" filter="url(#soft)"/>
+      <circle cx="90" cy="390" r="150" fill="#ff8a5b" opacity="0.2" filter="url(#soft)"/>
+      <circle cx="640" cy="80" r="90" fill="#ffffff" opacity="0.12"/>
+      <g transform="translate(86,118)">
+        <circle cx="92" cy="92" r="92" fill="#ffffff" opacity="0.16"/>
+        <path d="M92 28c-18 0-34 8-45 20-8 9-13 20-13 33 0 22 12 38 34 46 8 3 16 4 24 4 10 0 18-2 26-6 16-8 26-24 26-44 0-29-23-53-52-53zm0 22c17 0 30 13 30 31 0 12-6 21-16 26-5 3-10 4-16 4-7 0-13-1-18-4-13-6-20-16-20-28 0-8 3-15 8-20 6-7 15-9 32-9z" fill="url(#mark)"/>
+        <path d="M148 78c-6-18-20-32-38-38-4 8-6 16-6 25 0 8 2 16 5 22 10 4 20 12 26 22 8 12 10 24 8 36-2 14-10 26-22 34 14-4 26-12 34-24 12-16 16-36 12-56-2-8-8-16-19-21z" fill="#ffffff" opacity="0.92"/>
+      </g>
+      <text x="310" y="168" font-family="Segoe UI, Inter, system-ui, sans-serif" font-size="58" font-weight="800" letter-spacing="3" fill="#ffffff">PYAN YAUNG MAL</text>
+      <text x="310" y="214" font-family="Segoe UI, Inter, system-ui, sans-serif" font-size="22" font-weight="600" fill="#e8fff0">A marketplace for used products in Myanmar</text>
+      <g font-family="Segoe UI, Inter, system-ui, sans-serif" font-size="20" font-weight="700">
+        <rect x="310" y="248" width="150" height="48" rx="24" fill="#ff6b4a"/>
+        <text x="385" y="279" text-anchor="middle" fill="#ffffff">Resell</text>
+        <rect x="478" y="248" width="150" height="48" rx="24" fill="#7be35a"/>
+        <text x="553" y="279" text-anchor="middle" fill="#14532d">Renew</text>
+        <rect x="646" y="248" width="150" height="48" rx="24" fill="#ffe066"/>
+        <text x="721" y="279" text-anchor="middle" fill="#7a4e00">Reuse</text>
+      </g>
+    </svg>
+
+    <h1><span>Pyan</span> Yaung <em>Mal</em></h1>
+    <p class="tagline">Resell · Renew · Reuse — buy and sell used products in Myanmar. The app itself is only available on a local network.</p>
+
+    <div class="pills">
+      <span class="pill resell">KBZ Pay</span>
+      <span class="pill renew">Wave Pay</span>
+      <span class="pill reuse">QR + chat</span>
+    </div>
+
+    <section class="cards">
+      <article class="card">
+        <h2>Resell</h2>
+        <p>List what you no longer need with photos, a description, and a price.</p>
+      </article>
+      <article class="card">
+        <h2>Renew</h2>
+        <p>Give items a second life instead of buying everything new.</p>
+      </article>
+      <article class="card">
+        <h2>Reuse</h2>
+        <p>Pay with KBZ Pay or Wave Pay QR — no in-app purchase required.</p>
+      </article>
+    </section>
+
+    <section class="note local">
+      <h2>Local network only</h2>
+      <p>Pyan Yaung Mal is not a public website. It runs on a computer on your Wi‑Fi. Phones and other devices can open it only when they are on that same local network. This Netlify page is an overview — it cannot sign you in, list products, or open chat.</p>
+      <a class="local-link" href="http://192.168.181.90/">http://192.168.181.90/</a>
+      <p class="local-hint">On this PC you can also use <a href="http://127.0.0.1/">http://127.0.0.1/</a></p>
+    </section>
+
+    <section class="steps">
+      <h2>How it works</h2>
+      <ol>
+        <li>Create an account first, then start buying or selling. You can sign in to more than one account and switch between them.</li>
+        <li>Sellers upload a KBZ Pay or Wave Pay QR code, one or more product photos, a description, and a price.</li>
+        <li>When someone buys, the seller is notified in chat.</li>
+        <li>After payment, the seller marks the listing sold out, and it leaves Explore.</li>
+      </ol>
+    </section>
+
+    <section class="note">
+      <h2>Why QR payments</h2>
+      <p>In-app purchases are not available in some parts of Myanmar. Payment happens with a QR code and a screenshot in chat.</p>
+    </section>
+
+    <footer>
+      Source on
+      <a href="https://github.com/yeaethawe/PyanYaungMal">GitHub</a>
+    </footer>
+  </main>
+</body>
+</html>
