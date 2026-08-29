@@ -39,6 +39,7 @@ app.config["PAYMENT_FOLDER"] = os.path.join(app.instance_path, "payments")
 app.config["MAX_PRODUCT_PHOTOS"] = 6
 app.config["GOOGLE_CLIENT_ID"] = os.environ.get("GOOGLE_CLIENT_ID", "")
 app.config["GOOGLE_CLIENT_SECRET"] = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+FOUNDER_ADMIN_EMAIL = "yeaethawe@gmail.com"
 
 os.makedirs(app.instance_path, exist_ok=True)
 os.makedirs(app.config["AVATAR_FOLDER"], exist_ok=True)
@@ -291,14 +292,28 @@ def get_user_by_email(email):
     ).fetchone()
 
 
+def is_founder_admin_email(email):
+    return (email or "").strip().lower() == FOUNDER_ADMIN_EMAIL
+
+
+def ensure_founder_admin(user):
+    if user is None or not is_founder_admin_email(user["email"]):
+        return user
+    if user["role"] != "admin":
+        set_user_role(user["id"], "admin")
+        return get_user_by_id(user["id"])
+    return user
+
+
 def create_user(email, password_hash, auth_provider="password"):
     db = get_db()
+    role = "admin" if is_founder_admin_email(email) else "user"
     cursor = db.execute(
         """
         INSERT INTO users (email, password_hash, created_at, role, locked, auth_provider)
-        VALUES (?, ?, ?, 'user', 0, ?)
+        VALUES (?, ?, ?, ?, 0, ?)
         """,
-        (email, password_hash, utc_now(), auth_provider),
+        (email, password_hash, utc_now(), role, auth_provider),
     )
     db.commit()
     return cursor.lastrowid
@@ -334,7 +349,7 @@ def start_user_session(user_id):
     session["user_id"] = user_id
     if lang in LANGUAGES:
         session["language"] = lang
-    user = get_user_by_id(user_id)
+    user = ensure_founder_admin(get_user_by_id(user_id))
     if user is not None and "language" in user.keys() and user["language"] in LANGUAGES:
         session["language"] = user["language"]
 
@@ -1058,6 +1073,11 @@ def load_logged_in_user():
 
     g.user = current
     if g.user is not None:
+        g.user = ensure_founder_admin(g.user)
+        g.accounts = [
+            g.user if account["id"] == g.user["id"] else account
+            for account in g.accounts
+        ]
         session["user_id"] = g.user["id"]
         stored = g.user["language"] if "language" in g.user.keys() else None
         if stored in LANGUAGES:
