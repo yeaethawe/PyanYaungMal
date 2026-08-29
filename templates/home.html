@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Home · PyanYaungMal{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1>Welcome</h1>
+    <p class="lede">
+        You are signed in as <strong>{{ g.user['email'] }}</strong>
+        {% if g.user['role'] == 'admin' %}
+            · <span class="badge">Admin</span>
+        {% else %}
+            · member
+        {% endif %}
+    </p>
+    <div class="home-actions">
+        <a class="btn btn-primary" href="{{ url_for('settings') }}">Settings</a>
+        {% if g.user['role'] == 'admin' %}
+            <a class="btn btn-ghost" href="{{ url_for('admin') }}">Manage accounts</a>
+        {% endif %}
+    </div>
+    <form action="{{ url_for('logout') }}" method="post">
+        <button type="submit" class="btn btn-ghost">Log out</button>
+    </form>
+</section>
+{% endblock %}

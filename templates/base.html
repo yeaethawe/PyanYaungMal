@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00a0e0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="PyanYaungMal">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>{% block title %}PyanYaungMal{% endblock %}</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <p id="offline-banner" class="status-banner" hidden>You are offline. Cached pages still work.</p>
+    <div id="install-banner" class="status-banner install-banner" hidden>
+        <span>Install PyanYaungMal to use it like an app.</span>
+        <span class="install-actions">
+            <button type="button" id="install-button" class="btn btn-primary">Install</button>
+            <button type="button" id="install-dismiss" class="btn btn-ghost">Not now</button>
+        </span>
+    </div>
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('index') }}">
+            <img class="brand-mark" src="{{ url_for('static', filename='brand/mark.png') }}" alt="">
+            <span class="brand-copy">
+                <span class="brand-name">Pyan Yaung <em>Mal</em></span>
+                <span class="brand-tag">Resell · Renew · Reuse</span>
+            </span>
+        </a>
+        <nav>
+            {% if g.user %}
+                <details class="notif-box">
+                    <summary>
+                        Alerts
+                        {% if g.unread_count %}
+                            <span class="badge">{{ g.unread_count }}</span>
+                        {% endif %}
+                    </summary>
+                    <div class="notif-panel">
+                        {% if g.notifications %}
+                            <ul class="notif-list">
+                                {% for item in g.notifications %}
+                                    <li class="notif-item {% if item['read'] %}is-read{% endif %}">
+                                        <p>{{ item['message'] }}</p>
+                                        {% if not item['read'] %}
+                                            <form action="{{ url_for('dismiss_user_notification', notification_id=item['id']) }}" method="post">
+                                                <button type="submit" class="btn btn-ghost">Dismiss</button>
+                                            </form>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="hint">No warnings yet.</p>
+                        {% endif %}
+                    </div>
+                </details>
+                <a href="{{ url_for('settings') }}">Settings</a>
+                {% if g.user['role'] == 'admin' %}
+                    <a href="{{ url_for('admin') }}">Admin</a>
+                {% endif %}
+                <span class="nav-email">{{ g.user['email'] }}</span>
+                <form class="inline-form" action="{{ url_for('logout') }}" method="post">
+                    <button type="submit" class="btn btn-ghost">Logout</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a class="btn btn-primary" href="{{ url_for('signup') }}">Sign up</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="{% block page_class %}page{% endblock %}">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flash-list">
+                    {% for category, message in messages %}
+                        <li class="flash flash-{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', filename='js/pwa.js') }}" defer></script>
+</body>
+</html>

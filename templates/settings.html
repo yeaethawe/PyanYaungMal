@@ -1,0 +1,83 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Settings · PyanYaungMal{% endblock %}
+
+{% block topbar_search %}{% endblock %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>Settings</h1>
+        <p>Update your profile picture, reset your password, or upgrade this account.</p>
+    </div>
+</header>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>Profile picture</h2>
+            <p>This photo appears in the app header and on the team list.</p>
+        </div>
+    </div>
+    <form class="settings-form" action="{{ url_for('settings_avatar') }}" method="post" enctype="multipart/form-data">
+        <div class="avatar-row">
+            {% if user_avatar_url(g.user) %}
+                <img class="profile-photo" src="{{ user_avatar_url(g.user) }}" alt="Your profile picture">
+            {% else %}
+                <div class="profile-photo profile-photo-fallback">{{ g.user['email'][:1] | upper }}</div>
+            {% endif %}
+            <div>
+                <label for="avatar">Upload image</label>
+                <input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required>
+                <p class="hint">JPG, PNG, WEBP, or GIF. Up to 2 MB.</p>
+                <button type="submit" class="btn btn-primary">Save picture</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>Reset password</h2>
+            <p>Enter your current password, then choose a new one.</p>
+        </div>
+    </div>
+    <form class="settings-form" action="{{ url_for('settings_password') }}" method="post">
+        <label for="current_password">Current password</label>
+        <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+        <label for="new_password">New password</label>
+        <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+        <p class="hint">At least 8 characters.</p>
+        <label for="confirm_password">Confirm new password</label>
+        <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
+        <button type="submit" class="btn btn-primary">Update password</button>
+    </form>
+</section>
+
+<section class="panel settings-panel">
+    <div class="panel-head">
+        <div>
+            <h2>Upgrade to admin</h2>
+            {% if g.user['role'] == 'admin' %}
+                <p>This account already has admin access.</p>
+            {% else %}
+                <p>Enter a reusable 16-character admin key. The same key can be used by more than one person.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if g.user['role'] == 'admin' %}
+        <div class="settings-form">
+            <p class="hint">You can manage accounts from Team members.</p>
+            <a class="btn btn-secondary" href="{{ url_for('admin') }}">Open team members</a>
+        </div>
+    {% else %}
+        <form class="settings-form" action="{{ url_for('upgrade') }}" method="post" novalidate>
+            <label for="admin_key">Admin key</label>
+            <input id="admin_key" name="admin_key" type="text" maxlength="19" autocomplete="off" spellcheck="false" required>
+            <p class="hint">Letters and numbers, with or without dashes.</p>
+            <button type="submit" class="btn btn-primary">Become admin</button>
+        </form>
+    {% endif %}
+</section>
+{% endblock %}

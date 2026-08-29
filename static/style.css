@@ -1,0 +1,369 @@
+:root {
+    --bg: #eef8fb;
+    --card: #ffffff;
+    --ink: #12324a;
+    --muted: #5a7a88;
+    --line: #cfe6ee;
+    --accent: #00a0e0;
+    --accent-hover: #0088c2;
+    --green: #5fc24a;
+    --error: #8a1f1f;
+    --error-bg: #f8e4e4;
+    --success: #3fa35a;
+    --success-bg: #e4f3ea;
+    --shadow: 0 10px 30px rgba(0, 96, 140, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Inter, system-ui, sans-serif;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at top right, #d7f4c8, transparent 34%),
+        radial-gradient(circle at top left, #c8eefb, transparent 32%),
+        var(--bg);
+}
+
+a {
+    color: var(--accent);
+}
+
+.status-banner {
+    margin: 0;
+    padding: 0.7rem 1.25rem;
+    background: #efe6d4;
+    color: var(--ink);
+    text-align: center;
+}
+
+.install-banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--line);
+}
+
+.install-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.brand-mark {
+    width: 2.4rem;
+    height: 2.4rem;
+    object-fit: contain;
+}
+
+.brand-copy {
+    display: grid;
+    line-height: 1.15;
+}
+
+.brand-name {
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.brand-name em {
+    font-style: normal;
+    color: var(--green);
+}
+
+.brand-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+}
+
+.logo-lockup {
+    display: block;
+    width: min(14rem, 100%);
+    margin: 0 auto 1rem;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.nav-email {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.page {
+    width: min(28rem, calc(100% - 2rem));
+    margin: 2rem auto 4rem;
+}
+
+.page-wide {
+    width: min(56rem, calc(100% - 2rem));
+}
+
+h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.notif-box {
+    position: relative;
+}
+
+.notif-box summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.notif-box summary::-webkit-details-marker {
+    display: none;
+}
+
+.notif-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.6rem);
+    z-index: 5;
+    width: min(20rem, 80vw);
+    padding: 0.85rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.notif-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.7rem;
+}
+
+.notif-item p {
+    margin: 0 0 0.4rem;
+}
+
+.notif-item.is-read {
+    opacity: 0.65;
+}
+
+select,
+textarea {
+    width: 100%;
+    margin-bottom: 0.7rem;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    background: #fff;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.7rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+}
+
+.action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.btn-danger {
+    background: var(--error);
+    color: #fff;
+}
+
+.key-list {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+
+.key-list code {
+    font-size: 1rem;
+}
+
+.warn-compose {
+    margin-top: 0.4rem;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: var(--shadow);
+}
+
+h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.8rem;
+}
+
+.lede,
+.hint,
+.switch {
+    color: var(--muted);
+}
+
+.lede {
+    margin: 0 0 1.25rem;
+}
+
+form {
+    display: grid;
+    gap: 0.45rem;
+}
+
+label {
+    font-size: 0.95rem;
+}
+
+input {
+    width: 100%;
+    margin-bottom: 0.7rem;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font: inherit;
+    background: #fff;
+}
+
+.hint {
+    margin: -0.4rem 0 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    font: inherit;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-ghost {
+    background: transparent;
+    border-color: var(--line);
+    color: var(--ink);
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.switch {
+    margin: 1.1rem 0 0;
+}
+
+.flash-list {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+}
+
+.flash {
+    padding: 0.7rem 0.85rem;
+    border-radius: 10px;
+}
+
+.flash-error {
+    background: var(--error-bg);
+    color: var(--error);
+}
+
+.flash-success {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+@media (max-width: 640px) {
+    .brand-tag,
+    .nav-email {
+        display: none;
+    }
+
+    .card {
+        padding: 1.3rem;
+    }
+}

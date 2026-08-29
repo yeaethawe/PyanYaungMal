@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Offline · PyanYaungMal{% endblock %}
+
+{% block content %}
+<section class="card">
+    {% include "_brand_lockup.html" %}
+    <h1>You are offline</h1>
+    <p class="lede">
+        Saved screens still open without a connection. Sign up, log in, and log out
+        need the internet so your account stays in sync.
+    </p>
+    <a class="btn btn-primary btn-block" href="{{ url_for('index') }}">Try again</a>
+</section>
+{% endblock %}

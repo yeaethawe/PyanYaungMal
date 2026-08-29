@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00a0e0">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>{% block title %}Admin · PyanYaungMal{% endblock %}</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body class="dash">
+    <button type="button" class="dash-menu-toggle" id="sidebar-toggle" aria-label="Open menu">☰</button>
+    <aside class="dash-sidebar" id="sidebar">
+        <a class="dash-team" href="{{ url_for('home') }}">
+            <img class="dash-mark-img" src="{{ url_for('static', filename='brand/mark.png') }}" alt="">
+            <span>
+                <span class="dash-kicker">Pyan Yaung Mal</span>
+                <strong>Resell · Renew · Reuse</strong>
+            </span>
+        </a>
+        <nav class="dash-nav">
+            <p class="dash-nav-label">Explore</p>
+            <a href="{{ url_for('home') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/home.svg' %}</span>
+                Home
+            </a>
+            <p class="dash-nav-label">Manage</p>
+            {% if g.user['role'] == 'admin' %}
+                <a class="{% if request.endpoint == 'admin' %}is-active{% endif %}" href="{{ url_for('admin') }}">
+                    <span class="dash-ico" aria-hidden="true">{% include 'icons/users.svg' %}</span>
+                    Team members
+                </a>
+                <a href="{{ url_for('admin') }}#keys">
+                    <span class="dash-ico" aria-hidden="true">{% include 'icons/key.svg' %}</span>
+                    Admin keys
+                </a>
+            {% endif %}
+            <a class="{% if request.endpoint in ['settings', 'settings_password', 'settings_avatar'] %}is-active{% endif %}" href="{{ url_for('settings') }}">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/settings.svg' %}</span>
+                Settings
+            </a>
+        </nav>
+        <div class="dash-sidebar-foot">
+            <img class="dash-mark-img dash-mark-img-sm" src="{{ url_for('static', filename='brand/mark.png') }}" alt="">
+            Pyan Yaung Mal
+        </div>
+    </aside>
+
+    <div class="dash-shell">
+        <header class="dash-topbar">
+            {% block topbar_search %}
+            <label class="dash-search">
+                <span class="dash-ico" aria-hidden="true">{% include 'icons/search.svg' %}</span>
+                <input id="global-search" type="search" placeholder="Search users" autocomplete="off">
+            </label>
+            {% endblock %}
+            <div class="dash-top-actions">
+                <details class="notif-box">
+                    <summary class="icon-btn" aria-label="Alerts">
+                        {% include 'icons/bell.svg' %}
+                        {% if g.unread_count %}
+                            <span class="badge">{{ g.unread_count }}</span>
+                        {% endif %}
+                    </summary>
+                    <div class="notif-panel">
+                        {% if g.notifications %}
+                            <ul class="notif-list">
+                                {% for item in g.notifications %}
+                                    <li class="notif-item {% if item['read'] %}is-read{% endif %}">
+                                        <p>{{ item['message'] }}</p>
+                                        {% if not item['read'] %}
+                                            <form action="{{ url_for('dismiss_user_notification', notification_id=item['id']) }}" method="post">
+                                                <button type="submit" class="text-btn">Dismiss</button>
+                                            </form>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="hint">No warnings yet.</p>
+                        {% endif %}
+                    </div>
+                </details>
+                <a class="dash-avatar-link" href="{{ url_for('settings') }}" title="Settings">
+                    {% if user_avatar_url(g.user) %}
+                        <img class="dash-avatar-image" src="{{ user_avatar_url(g.user) }}" alt="">
+                    {% else %}
+                        <div class="dash-avatar">{{ g.user['email'][:1] | upper }}</div>
+                    {% endif %}
+                </a>
+            </div>
+        </header>
+
+        <main class="dash-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <div class="toast-stack" id="toast-stack">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <aside class="toast toast-{{ category }}" role="status">
+                        <div>
+                            <strong>{% if category == 'error' %}Something went wrong{% else %}Done{% endif %}</strong>
+                            <p>{{ message }}</p>
+                        </div>
+                        <button type="button" class="toast-close" aria-label="Close">×</button>
+                    </aside>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <script src="{{ url_for('static', filename='js/pwa.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
+</body>
+</html>

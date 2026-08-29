@@ -1,0 +1,180 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}Team members · PyanYaungMal{% endblock %}
+
+{% macro permission_icons(user) %}
+    <div class="perm-row" title="{{ user['role'] }} · {% if user['locked'] %}locked{% else %}active{% endif %}">
+        <span class="perm {% if user['role'] == 'admin' %}is-on{% endif %}" title="Admin">{% include 'icons/key.svg' %}</span>
+        <span class="perm is-on" title="Account">{% include 'icons/users.svg' %}</span>
+        <span class="perm is-on" title="Web access">{% include 'icons/globe.svg' %}</span>
+        {% if user['locked'] %}
+            <span class="perm is-warn" title="Locked">{% include 'icons/lock.svg' %}</span>
+        {% else %}
+            <span class="perm is-on" title="Unlocked">{% include 'icons/unlock.svg' %}</span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro user_menu(user) %}
+    {% if user['id'] != g.user['id'] %}
+        <details class="row-menu">
+            <summary class="icon-btn" aria-label="Actions">{% include 'icons/dots.svg' %}</summary>
+            <div class="row-menu-panel">
+                <button type="button" class="menu-link warn-open" data-user-id="{{ user['id'] }}" data-user-email="{{ user['email'] }}">Warn</button>
+                {% if user['locked'] %}
+                    <form action="{{ url_for('admin_unlock_user', user_id=user['id']) }}" method="post">
+                        <button type="submit">Unlock</button>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('admin_lock_user', user_id=user['id']) }}" method="post">
+                        <button type="submit">Lock</button>
+                    </form>
+                {% endif %}
+                <form action="{{ url_for('admin_delete_user', user_id=user['id']) }}" method="post" onsubmit="return confirm('Delete this account?');">
+                    <button type="submit" class="is-danger">Delete</button>
+                </form>
+            </div>
+        </details>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+<header class="page-head">
+    <div>
+        <h1>Team members</h1>
+        <p>Manage all users and admin keys associated with your team</p>
+    </div>
+</header>
+
+<section class="panel">
+    <div class="panel-head">
+        <div>
+            <h2>Active members</h2>
+            <p>View and manage active members of your team.</p>
+        </div>
+        <div class="panel-actions">
+            <a class="btn btn-secondary" href="#keys">Admin keys</a>
+            <button type="button" class="btn btn-primary" id="open-warn">Warn user</button>
+        </div>
+    </div>
+    <label class="field-search">
+        <span class="dash-ico" aria-hidden="true">{% include 'icons/search.svg' %}</span>
+        <input id="user-search" type="search" placeholder="Search users" autocomplete="off">
+    </label>
+    <div class="table-wrap">
+        <table class="members-table" id="members-table">
+            <thead>
+                <tr>
+                    <th class="check-col"><input type="checkbox" id="select-all" aria-label="Select all"></th>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Permissions</th>
+                    <th class="menu-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in active_users %}
+                    <tr data-search="{{ user['email'] }} {{ display_name(user['email']) }} {{ user['role'] }}">
+                        <td class="check-col"><input type="checkbox" aria-label="Select {{ user['email'] }}"></td>
+                        <td>
+                            <div class="name-cell">
+                                {% if user_avatar_url(user) %}
+                                    <img class="table-avatar" src="{{ user_avatar_url(user) }}" alt="">
+                                {% else %}
+                                    <span class="table-avatar table-avatar-fallback">{{ user['email'][:1] | upper }}</span>
+                                {% endif %}
+                                <span>{{ user['email'] }}{% if user['id'] == g.user['id'] %} <span class="you">you</span>{% endif %}</span>
+                            </div>
+                        </td>
+                        <td>{{ display_name(user['email']) }}</td>
+                        <td>{{ permission_icons(user) }}</td>
+                        <td class="menu-col">{{ user_menu(user) }}</td>
+                    </tr>
+                {% else %}
+                    <tr class="empty-row"><td colspan="5">No active members.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="panel-head">
+        <div>
+            <h2>Locked accounts <span class="count-badge">{{ locked_users | length }}</span></h2>
+            <p>These users cannot sign in until you unlock them.</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="members-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Permissions</th>
+                    <th>Joined</th>
+                    <th class="menu-col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in locked_users %}
+                    <tr data-search="{{ user['email'] }} {{ display_name(user['email']) }}">
+                        <td>{{ user['email'] }}</td>
+                        <td>{{ display_name(user['email']) }}</td>
+                        <td>{{ permission_icons(user) }}</td>
+                        <td>{{ format_short_date(user['created_at']) }}</td>
+                        <td class="menu-col">{{ user_menu(user) }}</td>
+                    </tr>
+                {% else %}
+                    <tr class="empty-row"><td colspan="5">No locked accounts.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="panel" id="keys">
+    <div class="panel-head">
+        <div>
+            <h2>Admin keys <span class="count-badge">{{ admin_keys | length }}</span></h2>
+            <p>Reusable 16-character keys. The same key can upgrade more than one member.</p>
+        </div>
+    </div>
+    <ul class="key-grid">
+        {% for key in admin_keys %}
+            <li>
+                <code>{{ format_admin_key(key['key_code']) }}</code>
+                <span>{{ format_short_date(key['created_at']) }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
+
+<aside class="promo">
+    <div>
+        <strong>Share an admin key</strong>
+        <p>Give a teammate any key above. They enter it on Home to become an admin. Keys stay valid after use.</p>
+    </div>
+    <a class="btn btn-light" href="{{ url_for('home') }}">Back to Home</a>
+</aside>
+
+<dialog class="warn-dialog" id="warn-dialog">
+    <form method="post" action="{{ url_for('admin_warn') }}">
+        <h2>Warn user</h2>
+        <p class="hint">This message appears in their notification box.</p>
+        <label for="warn_user">Account</label>
+        <select id="warn_user" name="user_id" required>
+            <option value="" disabled selected>Choose an account</option>
+            {% for user in users if user['id'] != g.user['id'] %}
+                <option value="{{ user['id'] }}">{{ user['email'] }}</option>
+            {% endfor %}
+        </select>
+        <label for="warn_message">Warning</label>
+        <textarea id="warn_message" name="message" rows="4" required placeholder="Write the warning they should see."></textarea>
+        <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" id="close-warn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Send warning</button>
+        </div>
+    </form>
+</dialog>
+{% endblock %}
